@@ -1,10 +1,13 @@
+import React from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import { Dashlet } from "~/components/Dashlet";
 
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
+  const { data: sessionData } = useSession();
+  // const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   return (
     <>
@@ -14,19 +17,31 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <header>
+        <header className="my-5">
           <AuthShowcase />
         </header>
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            My Dashboard
-          </h1>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-            </p>
+        {sessionData ? (
+          <div className="container">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <Dashlet title="Test Dashlet">
+                {`Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged.`}
+              </Dashlet>
+              <Dashlet title="Test Dashlet">
+                {`Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged.`}
+              </Dashlet>
+            </div>
           </div>
-        </div>
+        ) : null}
       </main>
     </>
   );
@@ -36,21 +51,19 @@ function AuthShowcase() {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div className="text-center text-2xl text-white">
-        {sessionData ? (
-          <div className="flex flex-row items-center justify-center gap-4">
-            <img
-              src={sessionData.user.image}
-              className="h-10 w-10 rounded-full"
-              alt="user avatar"
-              loading="lazy"
-            />
-            <span>{sessionData.user?.name}</span>
-            <span>{sessionData.user?.email}</span>
-          </div>
-        ) : null}
-      </div>
+    <div className="flex flex-row items-center justify-center gap-4 text-center text-2xl text-white">
+      {sessionData ? (
+        <>
+          <img
+            src={sessionData.user.image}
+            className="h-10 w-10 rounded-full"
+            alt="user avatar"
+            loading="lazy"
+          />
+          <span>{sessionData.user?.name}</span>
+          <span>{sessionData.user?.email}</span>
+        </>
+      ) : null}
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={sessionData ? () => void signOut() : () => void signIn()}
