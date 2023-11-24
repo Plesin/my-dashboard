@@ -1,7 +1,8 @@
 import React from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { Dashlet } from "~/components/Dashlet";
+import { Navbar } from "~/components/Navbar";
 
 // import { api } from "~/utils/api";
 
@@ -17,9 +18,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <header className="my-5">
-          <AuthShowcase />
-        </header>
+        <Navbar />
+        <header className="my-5"></header>
         {sessionData ? (
           <div className="container">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -44,32 +44,5 @@ export default function Home() {
         ) : null}
       </main>
     </>
-  );
-}
-
-function AuthShowcase() {
-  const { data: sessionData } = useSession();
-
-  return (
-    <div className="flex flex-row items-center justify-center gap-4 text-center text-2xl text-white">
-      {sessionData ? (
-        <>
-          <img
-            src={sessionData.user.image}
-            className="h-10 w-10 rounded-full"
-            alt="user avatar"
-            loading="lazy"
-          />
-          <span>{sessionData.user?.name}</span>
-          <span>{sessionData.user?.email}</span>
-        </>
-      ) : null}
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
   );
 }
